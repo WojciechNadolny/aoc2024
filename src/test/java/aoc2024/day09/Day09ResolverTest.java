@@ -1,7 +1,6 @@
-package day09;
+package aoc2024.day09;
 
 import aoc2024.DayResolver;
-import aoc2024.day09.Day09Resolver;
 import aoc2024.util.PuzzleInputLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
