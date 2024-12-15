@@ -3,7 +3,7 @@ package aoc2024.day12;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public record Plot(int row, int column, char type, AtomicInteger regionId, Set<Side> fences) {
+record Plot(int row, int column, char type, AtomicInteger regionId, Set<Side> fences) {
 	
 	boolean isAdjacent(Plot other) {
 		boolean nextAtSameRow = this.row == other.row

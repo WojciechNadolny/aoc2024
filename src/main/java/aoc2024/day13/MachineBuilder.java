@@ -1,6 +1,6 @@
 package aoc2024.day13;
 
-public class MachineBuilder {
+class MachineBuilder {
 	
 	int id;
 	Button buttonA;

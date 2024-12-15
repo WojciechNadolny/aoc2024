@@ -1,6 +1,6 @@
 package aoc2024.day13;
 
-public class Position implements Comparable<Position> {
+class Position implements Comparable<Position> {
 	
 	private long x;
 	private long y;

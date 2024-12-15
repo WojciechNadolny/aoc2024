@@ -1,6 +1,6 @@
 package aoc2024.day14;
 
-public class Robot {
+class Robot {
 	
 	final int id;
 	int positionX;

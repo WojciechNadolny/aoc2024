@@ -1,6 +1,6 @@
 package aoc2024.day04;
 
-public enum Search {
+enum Search {
 	RIGHT(0, 1, 0, 1, 0, 4),
 	DOWN_RIGHT(1, 1, 0, 4, 0, 4),
 	DOWN(1, 0, 0, 4, 0, 1),

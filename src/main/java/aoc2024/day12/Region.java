@@ -2,7 +2,7 @@ package aoc2024.day12;
 
 import java.util.*;
 
-public record Region(int id, Set<Plot> plots) {
+record Region(int id, Set<Plot> plots) {
 	
 	int getArea() {
 		return plots.size();
