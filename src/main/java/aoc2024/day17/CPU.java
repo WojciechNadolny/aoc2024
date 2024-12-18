@@ -2,9 +2,10 @@ package aoc2024.day17;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 class CPU {
+	
+	private static final String[] MNEMONIC = new String[] {"adv", "bxl", "bst", "jnz", "bxc", "out", "bdv", "cdv"};
 	
 	private int a;
 	private int b;
@@ -41,58 +42,38 @@ class CPU {
 		return c;
 	}
 	
-	String executeProgram(String program) {
-		System.out.println("Executing program: " + program);
-		String[] byteCode = program.split(",");
+	List<Integer> execute(int[] bytecode) {
 		do {
-			Opcode opcode = Opcode.of(byteCode[ip]);
-			int operand = getComboOperand(byteCode[ip + 1]);
-			printState(program, opcode, operand);
+			int opcode = bytecode[ip];
+			int operand = bytecode[ip + 1];
+			printState(bytecode, opcode, operand);
 			executeInstruction(opcode, operand);
 			ip += 2;
-		} while (ip < byteCode.length);
-		System.out.println("CPU halted");
-		return output.stream()
-				.map(String::valueOf)
-				.collect(Collectors.joining(","));
+		} while (ip < bytecode.length);
+		return output;
 	}
 	
-	private void printState(String program, Opcode opcode, int operand) {
-		System.out.print(new StringBuilder("Program = ").append(program)
-				.append(",  A=").append(a)
-				.append(",  B=").append(b)
-				.append(",  C=").append(c)
-				.append(",  IP=").append(ip)
-				.append(",  Output=").append(output)
-				.append(System.lineSeparator())
-				.repeat(" ", 10 + ip * 2)
-				.append("^  ").append(opcode).append(" ").append(operand).append(": "));
+	private void executeInstruction(int opcode, int operand) {
+		switch (opcode) {
+			case 0 -> adv(getCombo(operand));
+			case 1 -> bxl(operand);
+			case 2 -> bst(getCombo(operand));
+			case 3 -> jnz(operand);
+			case 4 -> bxc();
+			case 5 -> out(getCombo(operand));
+			case 6 -> bdv(getCombo(operand));
+			case 7 -> cdv(getCombo(operand));
+		}
 	}
 	
-	private int getComboOperand(String argument) {
+	private int getCombo(int argument) {
 		return switch (argument) {
-			case "0" -> 0;
-			case "1" -> 1;
-			case "2" -> 2;
-			case "3" -> 3;
-			case "4" -> a;
-			case "5" -> b;
-			case "6" -> c;
+			case 0, 1, 2, 3 -> argument;
+			case 4 -> a;
+			case 5 -> b;
+			case 6 -> c;
 			default -> throw new IllegalArgumentException("Unsupported argument: " + argument);
 		};
-	}
-	
-	private void executeInstruction(Opcode opcode, int operand) {
-		switch (opcode) {
-			case Opcode.adv -> adv(operand);
-			case Opcode.bxl -> bxl(operand);
-			case Opcode.bst -> bst(operand);
-			case Opcode.jnz -> jnz(operand);
-			case Opcode.bxc -> bxc(operand);
-			case Opcode.out -> out(operand);
-			case Opcode.bdv -> bdv(operand);
-			case Opcode.cdv -> cdv(operand);
-		}
 	}
 	
 	private void adv(int operand) {
@@ -121,7 +102,7 @@ class CPU {
 		}
 	}
 	
-	private void bxc(int ignored) {
+	private void bxc() {
 		int result = b ^ c;
 		System.out.format("%d XOR %d = %d   ", b, c, result);
 		setB(result);
@@ -145,29 +126,24 @@ class CPU {
 		setC(result);
 	}
 	
-	private enum Opcode {
-		adv("0"),
-		bxl("1"),
-		bst("2"),
-		jnz("3"),
-		bxc("4"),
-		out("5"),
-		bdv("6"),
-		cdv("7");
-		
-		private final String opcode;
-		
-		Opcode(String code) {
-			opcode = code;
+	private void printState(int[] bytecode, int opcode, int operand) {
+		String mnemonic = opcode >= 0 && opcode < MNEMONIC.length ? MNEMONIC[opcode] : "???";
+		StringBuilder debuggerOutput = new StringBuilder("Bytecode =  ").append(bytecode[0]);
+		for (int i = 1; i < bytecode.length; i++) {
+			debuggerOutput.append(",").append(bytecode[i]);
 		}
-		
-		static Opcode of(String code) {
-			for (Opcode opcode : Opcode.values()) {
-				if (opcode.opcode.equals(code)) {
-					return opcode;
-				}
-			}
-			throw new IllegalArgumentException("Unsupported opcode byte: " + code);
-		}
+		debuggerOutput.append(" ");
+		debuggerOutput.setCharAt(10 + ip * 2, '[');
+		debuggerOutput.setCharAt(14 + ip * 2, ']');
+		debuggerOutput
+				.append(",  A=").append(a)
+				.append(",  B=").append(b)
+				.append(",  C=").append(c)
+				.append(",  IP=").append(ip)
+				.append(",  Output=").append(output)
+				.append(System.lineSeparator())
+				.repeat(" ", 11 + ip * 2)
+				.append("^  ").append(mnemonic).append(" ").append(operand).append(": ");
+		System.out.print(debuggerOutput);
 	}
 }
